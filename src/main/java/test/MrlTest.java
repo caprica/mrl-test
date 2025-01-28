@@ -16,6 +16,7 @@ import uk.co.caprica.vlcj.media.MediaParsedStatus;
 import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.media.ParseFlag;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -40,11 +41,15 @@ import static uk.co.caprica.vlcj.media.MediaParsedStatus.mediaParsedStatus;
 
 public class MrlTest {
 
+    private static char sep = File.separatorChar;
+
     private static NanoHTTPD webServer;
 
     private static libvlc_instance_t instance;
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        System.setProperty("jna.encoding", "UTF-8");
+
         webServer = new NanoHTTPD(5001) {
             @Override
             public Response serve(IHTTPSession session) {
@@ -72,9 +77,9 @@ public class MrlTest {
         testFilePath("サンプル.mp3");
 
         // Normal files with spaces
-        testFilePath("dir with space/sample.mp3");
-        testFilePath("dir with space/образец.mp3");
-        testFilePath("dir with space/サンプル.mp3");
+        testFilePath("dir with space" + sep + "sample.mp3");
+        testFilePath("dir with space" + sep + "образец.mp3");
+        testFilePath("dir with space" + sep + "サンプル.mp3");
 
         // Normal file URLs
         testFileUrl("sample.mp3");
@@ -106,14 +111,18 @@ public class MrlTest {
 
     private static void testFilePath(String mrl) throws Exception {
         String currentDir = System.getProperty("user.dir");
-        String path = currentDir + "/src/main/resources/" + mrl;
-        System.out.println(path);
+        String path = currentDir + sep + "src" + sep + "main" + sep + "resources" + sep + mrl;
         libvlc_media_t media = libvlc_media_new_path(path);
         testMedia(mrl, media);
     }
 
     private static void testFileUrl(String mrl) throws Exception {
         String currentDir = System.getProperty("user.dir");
+        // URL's always have forward-flash, even on Windows
+        currentDir = currentDir.replace("\\", "/");
+        if (!currentDir.startsWith("/")) {
+            currentDir = "/" + currentDir;
+        }
         String location = "file://" + currentDir + "/src/main/resources" + "/" + mrl;
         System.out.println(location);
         libvlc_media_t media = libvlc_media_new_location(location);
