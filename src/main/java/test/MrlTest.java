@@ -168,7 +168,7 @@ public class MrlTest {
 
         libvlc_event_attach(eventManager, libvlc_MediaParsedChanged.intValue(), callback, null);
 
-        String nativeMrl = NativeString.copyNativeString(libvlc_media_get_mrl(media));
+        String nativeMrl = NativeString.copyAndFreeNativeString(libvlc_media_get_mrl(media));
 
         // Parsing does not work for http, so we need to actually play (see later) the media to check it
         if (!nativeMrl.startsWith("http://")) {
@@ -183,7 +183,7 @@ public class MrlTest {
         if (parseResult.get() == DONE) {
             if (!nativeMrl.startsWith("http://")) {
                 Pointer metaResult = libvlc_media_get_meta(media, Meta.ARTIST.intValue());
-                String meta = NativeString.copyNativeString(metaResult);
+                String meta = NativeString.copyAndFreeNativeString(metaResult);
                 success = meta.equals("Caprica Software Limited");
             } else {
                 success = true;
