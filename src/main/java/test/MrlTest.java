@@ -48,8 +48,6 @@ public class MrlTest {
     private static libvlc_instance_t instance;
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("jna.encoding", "UTF-8");
-
         webServer = new NanoHTTPD(5001) {
             @Override
             public Response serve(IHTTPSession session) {
