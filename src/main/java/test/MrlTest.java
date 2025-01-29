@@ -170,9 +170,7 @@ public class MrlTest {
 
         // Parsing does not work for http, so we need to actually play (see later) the media to check it
         if (!nativeMrl.startsWith("http://")) {
-            libvlc_media_parse_request(instance, media, ParseFlag.PARSE_LOCAL.intValue() | ParseFlag.PARSE_NETWORK.intValue(), 3000);
             libvlc_media_parse_request(instance, media, ParseFlag.PARSE_LOCAL.intValue(), 3000);
-
             parseResultLatch.await();
         }
 
